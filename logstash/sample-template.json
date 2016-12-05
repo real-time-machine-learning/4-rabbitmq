@@ -1,0 +1,18 @@
+{
+    "template":"info-*",
+    "settings":{
+        "number_of_shards":3
+    },
+    "mappings":{
+        "counter":{
+            "properties":{
+                "name":{
+                    "type":"text"
+                },
+                "age":{
+                    "type":"integer"
+                }
+            }
+        }
+    }
+}
