@@ -1,6 +1,4 @@
-numpy
-scipy 
-matplotlib
-pandas 
-joblib 
-flask 
+# pandas 
+# sklearn 
+pika 
+redis 
