@@ -8,6 +8,19 @@
 """
 
 import redis 
+import json 
+import pandas as pd 
+import pickle 
+
+def parse_response_core(input_blob):
+    """ 将从Redis读取的数据转换为dict格式""" 
+    return pickle.loads(input_blob)
+    
+def parse_response(input_blob_list):
+    """该函数将input_blob_list转换为一个list，每个元素是一个dict，最后返回
+    pandas DataFrame""" 
+    parsed_list = list(map(parse_response_core, input_blob_list))
+    return pd.DataFrame(parsed_list)    
 
 class RedisDataBridge():
     """该类负责更新数据和读取历史数据两方面工作。
@@ -24,11 +37,13 @@ class RedisDataBridge():
     def update_quote(self, symbol, price, timestamp):
         """更新队列中股票报价 """ 
         key = self.price_prefix + symbol
-        value = {timestamp: price}
-        self.client.lpush(key, value) 
+        value = {"timestamp": timestamp, "price": price}
+        self.client.lpush(key, pickle.dumps(value)) 
 
     def get_latest_quote(self, symbol, read_length= None):
         if read_length is None:
             read_length = self.read_length 
         key = self.price_prefix + symbol
-        self.client.lrange(key, 0, read_length) 
+        result_blob = self.client.lrange(key, 0, read_length) 
+        result = parse_response(result_blob)        
+        return result

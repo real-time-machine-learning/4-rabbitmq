@@ -25,3 +25,5 @@ ml_model:
 
 redis: 
   image: redis 
+  ports: 
+   - "16379:6379"

@@ -11,18 +11,25 @@
 import pika 
 import time 
 import json 
+import logging 
 
 from redis_operation import RedisDataBridge 
 
 
-time.sleep(30) 
-
+rabbitmq_host = "rabbitmq" 
 live_data_exchange_name = "stock_price" 
 live_data_queue_name = "ml_queue" 
 
-## 创建和RabbitMQ之间的连接
+## 设置日志等级，以便于在Docker输出中观察运行情况
+logging.getLogger().setLevel(logging.INFO) 
+
+## 创建和RabbitMQ之间的连接，如果遇见连接失败的情况（可能是RabbitMQ的服
+## 务器正在启动中），等待若干秒之后重试连接。
 connection = pika.BlockingConnection(
-    pika.ConnectionParameters(host = "rabbitmq"))
+    pika.ConnectionParameters(host = rabbitmq_host, 
+                              connection_attempts = 10, 
+                              retry_delay = 20))
+logging.info("成功连接RabbitMQ %s" % rabbitmq_host) 
 
 ## 创建和RabbitMQ之间的频道：注意连接是一个独立TCP/IP协议连接，而频道是
 ## 其中的一个逻辑分隔。这一个频道将会专门为新的报价数据所用，我们后面将
@@ -57,10 +64,13 @@ def ProcessPrice(channel, method, properties, body):
     redis_data_bridge.update_quote(symbol, price, timestamp) 
     
     ## 读取历史价格
-    ## price_data = redis_data_bridge.get_latest_quote(symbol)
+    price_data = redis_data_bridge.get_latest_quote(symbol)
+    logging.info(price_data) 
+    
 
 channel_live_data.basic_consume(ProcessPrice,
                                 queue = live_data_queue_name,
                                 no_ack=True)
 
+logging.info("成功完成初始化，开始接收消息")
 channel_live_data.start_consuming() 
