@@ -1,16 +1,16 @@
 {
-    "template":"info-*",
-    "settings":{
-        "number_of_shards":3
-    },
+    "template":"stock_price-*",
     "mappings":{
         "counter":{
             "properties":{
-                "name":{
+                "symbol":{
                     "type":"text"
                 },
-                "age":{
-                    "type":"integer"
+                "timestamp":{
+                    "type":"date"
+                },
+                "price":{
+                    "type":"float" 
                 }
             }
         }

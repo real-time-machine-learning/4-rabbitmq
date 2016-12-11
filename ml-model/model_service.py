@@ -48,12 +48,10 @@ def ProcessPrice(channel, method, properties, body):
     """该函数是读取数据之后触发的函数。执行数据缓存、处理，以及后期预测所有
     工作。
     """ 
-    print(body)
-    print(str(body)) 
-    data = json.loads(str(body)) 
+    data = json.loads(body.decode("utf-8")) 
     symbol = data["symbol"]
-    price = data["price"]
     timestamp = data["timestamp"]
+    price = data["price"]
     
     ## 更新和缓存价格 
     redis_data_bridge.update_quote(symbol, price, timestamp) 
