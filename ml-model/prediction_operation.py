@@ -8,3 +8,10 @@ learn模型的一个增强，其中包含两方面：
 2) 实现
 
 """ 
+
+import pandas as pd 
+from sklearn.pipeline import Pipeline
+from sklearn.externals import joblib 
+
+
+
