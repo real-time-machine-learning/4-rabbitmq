@@ -2,3 +2,6 @@ pandas
 pika 
 redis 
 sklearn
+numpy 
+scipy 
+joblib

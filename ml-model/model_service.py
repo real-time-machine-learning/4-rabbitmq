@@ -96,13 +96,14 @@ def ProcessPrice(channel, method, properties, body):
     
     ## 进行一点小小的数据处理 
     if price_data.shape[0] >= 11:
-        prediction = model.predict(price_data) 
+        prediction = model.predict(price_data)[0] 
         
         logging_data = {"symbol": symbol, 
                         "timestamp": timestamp,
                         "prediction": prediction} 
         channel_results.basic_publish(exchange = result_exchange_name,
-                                      body = logging_data)
+                                      routing_key = "", 
+                                      body = json.dumps(logging_data))
                                       
         
 

@@ -7,4 +7,8 @@ RUN pip install -r requirements.txt
 
 COPY *.py /model_service/ 
 
+COPY *.PyData /model_service/ 
+
+COPY *.npy /model_service/ 
+
 CMD ["python", "model_service.py"]
