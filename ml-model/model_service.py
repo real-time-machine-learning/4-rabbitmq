@@ -68,8 +68,7 @@ channel_results.exchange_declare(exchange = result_exchange_name,
                                  type = "fanout") 
 
 ## 创建对预测结果进行储存的队列
-channel_results.queue_declare(queue = result_queue_name,
-                              exclusive = True) 
+channel_results.queue_declare(queue = result_queue_name)
 
 ## 将预测结果储存队列和交换中心绑定在一起。
 channel_results.queue_bind(exchange = result_exchange_name,
@@ -92,7 +91,6 @@ def ProcessPrice(channel, method, properties, body):
     
     ## 读取历史价格
     price_data = redis_data_bridge.get_latest_quote(symbol, read_length = 11)
-    logging.info(price_data) 
     
     ## 进行一点小小的数据处理 
     if price_data.shape[0] >= 11:
