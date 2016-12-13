@@ -37,7 +37,7 @@ class RedisDataBridge():
     def update_quote(self, symbol, price, timestamp):
         """更新队列中股票报价 """ 
         key = self.price_prefix + symbol
-        value = {"timestamp": timestamp, "price": price}
+        value = {"timestamp": timestamp, "Close": price}
         self.client.lpush(key, pickle.dumps(value)) 
 
     def get_latest_quote(self, symbol, read_length= None):

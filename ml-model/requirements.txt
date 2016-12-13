@@ -1,3 +1,4 @@
 pandas 
 pika 
 redis 
+sklearn

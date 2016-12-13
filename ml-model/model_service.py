@@ -12,13 +12,19 @@ import pika
 import time 
 import json 
 import logging 
+from sklearn.pipeline import Pipeline
+from sklearn.externals import joblib 
+import pandas as pd 
+from timeseriesutil import * 
 
 from redis_operation import RedisDataBridge 
-
 
 rabbitmq_host = "rabbitmq" 
 live_data_exchange_name = "stock_price" 
 live_data_queue_name = "ml_queue" 
+
+result_exchange_name = "prediction_result" 
+result_queue_name = "prediction_result_queue" 
 
 ## 设置日志等级，以便于在Docker输出中观察运行情况
 logging.getLogger().setLevel(logging.INFO) 
@@ -51,6 +57,27 @@ channel_live_data.queue_bind(exchange = live_data_exchange_name,
 ## 创建和Redis高速缓存之间的连接: 
 redis_data_bridge = RedisDataBridge("redis", read_length = 12) 
 
+## 我们利用机器学习模型对前来的数据进行预测分析之后，需要将结果传入下游
+## 系统中进行使用。这里我们仍然利用RabbitMQ，将分析完成的数据放入一个
+## RabbitMQ的扇形交换中心，下游使用预测结果的服务只需读取对应该扇形交换
+## 中心的队列即可。
+channel_results = connection.channel()
+
+## 创建分发预测结果的交换中心
+channel_results.exchange_declare(exchange = result_exchange_name,
+                                 type = "fanout") 
+
+## 创建对预测结果进行储存的队列
+channel_results.queue_declare(queue = result_queue_name,
+                              exclusive = True) 
+
+## 将预测结果储存队列和交换中心绑定在一起。
+channel_results.queue_bind(exchange = result_exchange_name,
+                           queue = result_queue_name)
+
+## 准备机器学习预测模型
+model = joblib.load("saved-stock-pipeline.PyData") 
+
 def ProcessPrice(channel, method, properties, body):
     """该函数是读取数据之后触发的函数。执行数据缓存、处理，以及后期预测所有
     工作。
@@ -64,9 +91,21 @@ def ProcessPrice(channel, method, properties, body):
     redis_data_bridge.update_quote(symbol, price, timestamp) 
     
     ## 读取历史价格
-    price_data = redis_data_bridge.get_latest_quote(symbol)
+    price_data = redis_data_bridge.get_latest_quote(symbol, read_length = 11)
     logging.info(price_data) 
     
+    ## 进行一点小小的数据处理 
+    if price_data.shape[0] >= 11:
+        prediction = model.predict(price_data) 
+        
+        logging_data = {"symbol": symbol, 
+                        "timestamp": timestamp,
+                        "prediction": prediction} 
+        channel_results.basic_publish(exchange = result_exchange_name,
+                                      body = logging_data)
+                                      
+        
+
 
 channel_live_data.basic_consume(ProcessPrice,
                                 queue = live_data_queue_name,
