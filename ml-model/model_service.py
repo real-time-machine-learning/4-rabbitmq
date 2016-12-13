@@ -103,9 +103,6 @@ def ProcessPrice(channel, method, properties, body):
                                       routing_key = "", 
                                       body = json.dumps(logging_data))
                                       
-        
-
-
 channel_live_data.basic_consume(ProcessPrice,
                                 queue = live_data_queue_name,
                                 no_ack=True)
