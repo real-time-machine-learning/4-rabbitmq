@@ -16,9 +16,9 @@ git clone https://github.com/real-time-machine-learning/4-rabbitmq
 
 本章会运用到Docker作为集群配置方法，其余软件均通过Docker配置安装。
 
- * 如需要复习Docker安装配置方法，[看这里](https://github.com/real-time-machine-learning/3-docker-intro) *
-   如需复习Scikit Learn基本操作，[看这里](https://github.com/real-time-machine-learning/2-scikit-learn-intro)
-   * 如需复习Pandas基本操作，[看这里](https://github.com/real-time-machine-learning/1-pandas-intro)
+ * 如需要复习Docker安装配置方法，[看这里](https://github.com/real-time-machine-learning/3-docker-intro) 
+ * 如需复习Scikit Learn基本操作，[看这里](https://github.com/real-time-machine-learning/2-scikit-learn-intro)
+ * 如需复习Pandas基本操作，[看这里](https://github.com/real-time-machine-learning/1-pandas-intro)
 
 
 --- 
