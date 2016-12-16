@@ -26,6 +26,22 @@ git clone https://github.com/real-time-machine-learning/4-rabbitmq
 
 ![案例构架](pics/overall-design.png)
 
+## 运行本章节实例
+
+只需在命令行本章节代码目录中运行以下代码，即可启动该集群。
+
+```shell
+docker-compose up 
+```
+
+## 可能遇见的问题
+
+本案例使用了Elasticsearch 5.0 的Docker镜像，在有些电脑上（如笔者的），
+需要对系统环境变量进行少许调整，才能正常运行。需要运行以下命令
+
+```shell 
+sudo sysctl -w vm.max_map_count=262144 
+```
 
 --- 
 
