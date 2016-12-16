@@ -24,7 +24,7 @@ git clone https://github.com/real-time-machine-learning/4-rabbitmq
 
 完成之后我们的集群的构架如下图：
 
-[案例构架](pics/overall-design.png)
+![案例构架](pics/overall-design.png)
 
 
 --- 
