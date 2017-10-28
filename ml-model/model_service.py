@@ -44,7 +44,7 @@ channel_live_data = connection.channel()
 
 ## 创建一个交换中心，采用fanout模式
 channel_live_data.exchange_declare(exchange = live_data_exchange_name, 
-                                   type = "fanout")
+                                   exchange_type = "fanout")
 
 ## 创建一个队列，为该客户端独享
 channel_live_data.queue_declare(queue = live_data_queue_name, 
@@ -65,7 +65,7 @@ channel_results = connection.channel()
 
 ## 创建分发预测结果的交换中心
 channel_results.exchange_declare(exchange = result_exchange_name,
-                                 type = "fanout") 
+                                 exchange_type = "fanout") 
 
 ## 创建对预测结果进行储存的队列
 channel_results.queue_declare(queue = result_queue_name)
