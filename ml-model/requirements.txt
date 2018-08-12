@@ -1,5 +1,5 @@
 pandas 
-pika 
+pika>=0.11.0
 redis 
 sklearn
 numpy 
